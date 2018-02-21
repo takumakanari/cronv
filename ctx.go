@@ -35,6 +35,21 @@ func NewCronv(line string, startTime time.Time, durationMinutes float64) (*Cronv
 	return cronv, nil
 }
 
+type EnvDef struct {
+	Name string
+	Val  string
+}
+
+func maybeParseEnv(line string) (*EnvDef, bool) {
+	if kv := strings.SplitN(line, "=", 2); len(kv) == 2 { // K=V => [K V]
+		return &EnvDef{
+			Name: kv[0],
+			Val:  kv[1],
+		}, true
+	}
+	return nil, false
+}
+
 type Exec struct {
 	Start time.Time
 	End   time.Time
@@ -62,6 +77,7 @@ type CronvCtx struct {
 	TimeFrom        time.Time
 	TimeTo          time.Time
 	CronEntries     []*Cronv
+	EnvEntries      []*EnvDef
 	durationMinutes float64
 }
 
@@ -89,15 +105,23 @@ func (self *CronvCtx) AppendNewLine(line string) (bool, error) {
 	if len(trimed) == 0 || string(trimed[0]) == "#" {
 		return false, nil
 	}
+
 	cronv, err := NewCronv(trimed, self.TimeFrom, self.durationMinutes)
 	if err != nil {
 		switch err.(type) {
 		case *InvalidTaskError:
-			return false, nil // pass
+			// Try to parse line as env-def (if line is not a cron entry)
+			if envDef, ok := maybeParseEnv(line); ok {
+				self.EnvEntries = append(self.EnvEntries, envDef)
+			}
+
+			// Pass (not a cron entry)
+			return false, nil
 		default:
 			return false, fmt.Errorf("Failed to analyze cron '%s': %s", line, err)
 		}
 	}
+
 	self.CronEntries = append(self.CronEntries, cronv)
 	return true, nil
 }
