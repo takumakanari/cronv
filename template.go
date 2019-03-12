@@ -58,6 +58,9 @@ const TEMPLATE = `
 				{{range $index, $cronv := .CronEntries}}
 					{{ $job := JSEscapeString $cronv.Crontab.Job }}
 					tasks['{{$job}}'] = [];
+				{{end}}
+				{{range $index, $cronv := .CronEntries}}
+					{{ $job := JSEscapeString $cronv.Crontab.Job }}
 					{{if IsRunningEveryMinutes $cronv.Crontab }}
 						tasks['{{$job}}'].push(['{{$job}}', '', 'Every minutes {{$job}}', {{NewJsDate $timeFrom}}, {{NewJsDate $timeTo}}]);
 					{{else}}
