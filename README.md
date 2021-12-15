@@ -76,7 +76,7 @@ $ crontab -l | cronv -d 1d
 For 12 hours from 21:00, today:
 
 ```shell
-$ crontab -l | cronv -from-time 21:00 -d 12h
+$ crontab -l | cronv --from-time 21:00 -d 12h
 ```
 
 For 30 minuts from now, output html file to path/to/output.html:
@@ -88,7 +88,7 @@ $ crontab -l | cronv -d 30m -o path/to/output.html
 For 2 hours from 2016/12/24 17:30, output html file to path/to/output2.html:
 
 ```shell
-$ crontab -l | cronv -from-date '2016/12/24' -from-time 17:30 -d 2h -o path/to/output2.html
+$ crontab -l | cronv --from-date '2016/12/24' -from-time 17:30 -d 2h -o path/to/output2.html
 ```
 
 With original title/label:
