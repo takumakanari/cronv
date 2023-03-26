@@ -1,6 +1,6 @@
 module github.com/takumakanari/cronv
 
-go 1.17
+go 1.18
 
 require (
 	github.com/jessevdk/go-flags v1.4.0
